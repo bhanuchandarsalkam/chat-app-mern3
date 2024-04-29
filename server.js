@@ -14,7 +14,7 @@ const store=new mongodbsession({
     collection:"sessions"
 })
 app.use(session({
-    secret:process.env.SECRET_KEY,
+    secret:process.env.secret_key,
     resave:false,
     saveUninitialized:false,
     store:store
