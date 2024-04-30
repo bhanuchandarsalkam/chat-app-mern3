@@ -22,7 +22,7 @@ app.use(session({
 }))
 app.use(express.json())
 app.use(cors({
-    origin: 'http://127.0.0.1:5173/', // Replace with your frontend URL
+    origin: 'http://127.0.0.1:5173', // Replace with your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true // Enable sending cookies from the frontend
 }));
