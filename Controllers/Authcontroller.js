@@ -1,6 +1,8 @@
 const usermodel = require("../Models/usermodel");
 const bcrypt=require("bcryptjs");
 const generatetoken = require("../utils/generatetoken");
+const jwt=require("jsonwebtoken")
+require("dotenv").config()
 const signup=async(req,res)=>{
    try{
  const {fullname,username,password,confirmpassword,gender,profilepic}=req.body;
@@ -46,6 +48,12 @@ const login=async(req,res)=>{
     try{
     const {username,password}=req.body;
     const token=req.cookies.jwt;
+    if(!token){
+        return res.send({
+            status:400,
+            message:"token is not there"
+        })
+    }
     const user=await usermodel.findOne({username})
     const ispassword=await bcrypt.compare(password,user.password)
     if(!user||!ispassword){
@@ -56,10 +64,12 @@ const login=async(req,res)=>{
             userId:user._id,
             username:user.username
         }
+        console.log(token)
+        const accesstoken=jwt.sign(user,process.env.secret_key)
     return res.send({
         status:200,
         message:"login successfully",
-        data:{user,token}
+        data:{user,accesstoken}
     })
 }
 catch(err){
