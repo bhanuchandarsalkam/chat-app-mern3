@@ -59,7 +59,8 @@ const login=async(req,res)=>{
     return res.send({
         status:200,
         message:"login successfully",
-        data:user,token
+        data:user,
+        token:token
     })
 }
 catch(err){
