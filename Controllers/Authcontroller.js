@@ -45,6 +45,7 @@ const signup=async(req,res)=>{
 const login=async(req,res)=>{
     try{
     const {username,password}=req.body;
+    const token=req.cookies.jwt;
     const user=await usermodel.findOne({username})
     const ispassword=await bcrypt.compare(password,user.password)
     if(!user||!ispassword){
@@ -58,7 +59,7 @@ const login=async(req,res)=>{
     return res.send({
         status:200,
         message:"login successfully",
-        data:user
+        data:user,token
     })
 }
 catch(err){
