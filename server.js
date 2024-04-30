@@ -4,6 +4,7 @@ const app=express();
 const session=require("express-session")
 const mongodbsession=require("connect-mongodb-session")(session)
 const db=require("./db.js");
+const cors=require("cors");
 const cookieparser=require("cookie-parser")
 const messagerouter = require("./Route/messageroutes.js");
 const userrouter = require("./Route/userroutes.js");
@@ -20,6 +21,7 @@ app.use(session({
     store:store
 }))
 app.use(express.json())
+app.use(cors());
 app.get("/",(req,res)=>{
     res.send("server is running")
 })
