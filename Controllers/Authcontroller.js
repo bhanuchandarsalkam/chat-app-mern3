@@ -48,13 +48,14 @@ const login=async(req,res)=>{
     try{
     const {username,password}=req.body;
     const token=req.cookies.jwt;
-    if(!token){
-        return res.send({
-            status:400,
-            message:"token is not there"
-        })
-    }
+    // if(!token){
+    //     return res.send({
+    //         status:400,
+    //         message:"token is not there"
+    //     })
+    // }
     const user=await usermodel.findOne({username})
+    console.log(user)
     const ispassword=await bcrypt.compare(password,user.password)
     if(!user||!ispassword){
         return res.send("invalid credentials")
@@ -65,11 +66,10 @@ const login=async(req,res)=>{
             username:user.username
         }
         console.log(token)
-        const accesstoken=jwt.sign(user,process.env.secret_key)
     return res.send({
         status:200,
         message:"login successfully",
-        data:{user,accesstoken}
+        data:{user,token}
     })
 }
 catch(err){
