@@ -24,8 +24,8 @@ app.use(express.json())
 app.use(cors({
     origin: 'http://127.0.0.1:5173', // Replace with your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-  //credentials: true // Enable sending cookies from the frontend
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // Enable sending cookies from the frontend
 }));
 app.get("/",(req,res)=>{
     res.send("server is running")
