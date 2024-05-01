@@ -45,75 +45,89 @@ const signup=async(req,res)=>{
    }
 }
 const login=async(req,res)=>{
-    try{
-    const {username,password}=req.body;
-    // if(!token){
-    //     return res.send({
-    //         status:400,
-    //         message:"token is not there"
-    //     })
+    // try{
+    // const {username,password}=req.body;
+    // // if(!token){
+    // //     return res.send({
+    // //         status:400,
+    // //         message:"token is not there"
+    // //     })
+    // // }
+    // const user=await usermodel.findOne({username})
+    // // console.log(user)
+    // const ispassword=await bcrypt.compare(password,user.password)
+    // if(!user||!ispassword){
+    //     return res.send("invalid credentials")
     // }
-    const user=await usermodel.findOne({username})
+    // console.log("ok")
     // console.log(user)
-    const ispassword=await bcrypt.compare(password,user.password)
-    if(!user||!ispassword){
-        return res.send("invalid credentials")
-    }
-    console.log("ok")
-    console.log(user)
-    const payload = {
-        User: user.username
-    }
-    const options={
-        expiresIn: '1h'
-    }
-    jwt.sign(payload, process.env.secret_key,options, (err, token) => {
-        if (err) {
-            console.error('Failed to generate token:', err);
-        } else {
-            console.log('Generated token:', token);
-            return res.send({
-                status:200,
-                message:"login successfully",
-                user:user,
-                token:token
-            })
-        }
-    });
-
-    // req.session.isAuth=true;
-    //     req.session.user={
-    //         userId:user._id,
-    //         username:user.username
+    // const payload = {
+    //     User: user.username
+    // }
+    // const options={
+    //     expiresIn: '1h'
+    // }
+    // jwt.sign(payload, process.env.secret_key,options, (err, token) => {
+    //     if (err) {
+    //         console.error('Failed to generate token:', err);
+    //     } else {
+    //         console.log('Generated token:', token);
+    //         return res.send({
+    //             status:200,
+    //             message:"login successfully",
+    //             user:user,
+    //             token:token
+    //         })
     //     }
-    // return res.send({
-    //     status:200,
-    //     message:"login successfully",
-    //     data:user
+    // });
+
+    // // req.session.isAuth=true;
+    // //     req.session.user={
+    // //         userId:user._id,
+    // //         username:user.username
+    // //     }
+    // // return res.send({
+    // //     status:200,
+    // //     message:"login successfully",
+    // //     data:user
     // })
-}
-catch(err){
-   return res.send({
-    status:500,
-    message:"database error",
-    error:err
-   })
+// }
+// catch(err){
+//    return res.send({
+//     status:500,
+//     message:"database error",
+//     error:err
+//    })
+// }
+try {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
+    const isPasswordCorrect = await bcrypt.compare(password, user?.password || "");
+
+    if (!user || !isPasswordCorrect) {
+        return res.status(400).json({ error: "Invalid username or password" });
+    }
+
+    generatetoken(user._id, res);
+
+    res.status(200).json({
+        _id: user._id,
+        fullName: user.fullName,
+        username: user.username,
+        profilePic: user.profilePic,
+    });
+} catch (error) {
+    console.log("Error in login controller", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
 }
 }
 const logout=(req,res)=>{
-    req.session.destroy((err)=>{
-        if(err){
-            return res.send({
-                status:401,
-                message:"logout unsuccessfull"
-            })
-        }
-        else{
-            return res.send({
-                status:200,
-                message:"logout successfull"
-            })
-        }
-    })
+    try {
+		res.cookie("jwt", "", { maxAge: 0 });
+		res.status(200).json({ message: "Logged out successfully" });
+	} catch (error) {
+		console.log("Error in logout controller", error.message);
+		res.status(500).json({ error: "Internal Server Error" });
+	}
 }
 module.exports={signup,login,logout};
