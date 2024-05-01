@@ -4,7 +4,7 @@ const protectRoute = async (req, res, next) => {
     
 	try {
         console.log("hai heelo")
-		const token = req.headers["Authorization"];
+		const token = req.cookies.jwt
        console.log("hai",token)
 		if (!token) {
 			return res.status(401).json({ error: "Unauthorized - No Token Provided" });
