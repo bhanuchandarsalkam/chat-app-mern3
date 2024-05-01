@@ -47,8 +47,6 @@ const signup=async(req,res)=>{
 const login=async(req,res)=>{
     try{
     const {username,password}=req.body;
-    const token=req.cookies.jwt;
-    
     // if(!token){
     //     return res.send({
     //         status:400,
@@ -56,22 +54,43 @@ const login=async(req,res)=>{
     //     })
     // }
     const user=await usermodel.findOne({username})
-    console.log(user)
+    // console.log(user)
     const ispassword=await bcrypt.compare(password,user.password)
     if(!user||!ispassword){
         return res.send("invalid credentials")
     }
-    req.session.isAuth=true;
-        req.session.user={
-            userId:user._id,
-            username:user.username
+    console.log("ok")
+    console.log(user)
+    const payload = {
+        User: user.username
+    }
+    const options={
+        expiresIn: '1h'
+    }
+    jwt.sign(payload, process.env.secret_key,options, (err, token) => {
+        if (err) {
+            console.error('Failed to generate token:', err);
+        } else {
+            console.log('Generated token:', token);
+            return res.send({
+                status:200,
+                message:"login successfully",
+                user:user,
+                token:token
+            })
         }
-        console.log(token)
-    return res.send({
-        status:200,
-        message:"login successfully",
-        data:{user,token}
-    })
+    });
+
+    // req.session.isAuth=true;
+    //     req.session.user={
+    //         userId:user._id,
+    //         username:user.username
+    //     }
+    // return res.send({
+    //     status:200,
+    //     message:"login successfully",
+    //     data:user
+    // })
 }
 catch(err){
    return res.send({
