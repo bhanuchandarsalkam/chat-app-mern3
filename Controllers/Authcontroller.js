@@ -48,6 +48,7 @@ const login=async(req,res)=>{
     try{
     const {username,password}=req.body;
     const token=req.cookies.jwt;
+    
     // if(!token){
     //     return res.send({
     //         status:400,
