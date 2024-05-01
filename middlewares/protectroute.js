@@ -3,7 +3,6 @@ const usermodel = require("../Models/usermodel");
 const protectRoute = async (req, res, next) => {
     
 	try {
-        console.log("hai heelo")
 		const token = req.cookies.jwt
        console.log("hai",token)
 		if (!token) {
